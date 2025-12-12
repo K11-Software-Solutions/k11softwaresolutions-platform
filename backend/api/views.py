@@ -1,0 +1,174 @@
+from rest_framework.views import APIView
+from rest_framework.decorators import api_view
+
+# API root endpoint
+@api_view(["GET"])
+def api_root(request):
+    return Response({"message": "K11 API is running!", "status": "ok"})
+# --- Service List View ---
+from rest_framework.generics import GenericAPIView
+from rest_framework.response import Response
+
+class ServiceListView(APIView):
+    def get(self, request):
+        # Example static data, replace with DB query if needed
+        services = [
+            {
+                "id": 1,
+                "name": "K11 Software Solutions",
+                "website": "https://www.softwaretestautomation.org",
+                "description": (
+                    "K11 Software Solutions is a consulting and training practice led by a seasoned Test Automation Architect and Full-Stack Engineer with over 12+ years of industry experience.\n\n"
+                    "We specialize in helping teams and individuals build real-world skills and scalable solutions in:\n\n"
+                    "**Full-Stack Test Automation**\n"
+                    "UI, API, database, and cloud-based validation — aligned with enterprise workflows\n\n"
+                    "**AI/ML in Testing**\n"
+                    "Model-based test design, Gherkin scenario generation, and intelligent test workflows\n\n"
+                    "**Custom Development Consulting**\n"
+                    "Hands-on development in Java, Python, REST APIs, test frameworks, and microservices\n\n"
+                    "**Upskilling & Mentorship**"
+                ),
+            },
+            {
+                "id": 2,
+                "name": "SDET Insights LinkedIn Newsletter",
+                "website": "https://www.linkedin.com/newsletters/7354009267919613954/",
+                "description": (
+                    "Professional technical writing, documentation, and thought leadership for software teams and products.\n\n"
+                    "Read our latest insights and best practices in the SDET Insights LinkedIn Newsletter."
+                ),
+            },
+        ]
+        return Response(services)
+    
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+
+
+from django.contrib.auth.models import User
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.core.mail import send_mail
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
+from django.conf import settings
+from .models import UserProfile
+from .serializers import RegisterSerializer
+
+
+class RegisterView(GenericAPIView):
+    serializer_class = RegisterSerializer
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        data = serializer.validated_data
+        username = data["username"]
+        email = data["email"]
+        password = data["password"]
+        subscription = data["subscription"]
+
+        if User.objects.filter(username=username).exists():
+            return Response({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
+        if User.objects.filter(email=email).exists():
+            return Response({"error": "Email already exists."}, status=status.HTTP_400_BAD_REQUEST)
+
+        from django.db import IntegrityError
+        try:
+            # Create inactive user
+            user = User.objects.create_user(username=username, email=email, password=password, is_active=False)
+            UserProfile.objects.create(user=user, subscription=subscription)
+        except IntegrityError as e:
+            if 'username' in str(e):
+                return Response({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
+            if 'email' in str(e):
+                return Response({"error": "Email already exists."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Registration failed due to a database error."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Generate activation link
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        base_url = getattr(settings, "ACTIVATION_BASE_URL", "http://localhost:8000")
+        activation_link = f"{base_url}/api/activate/{uid}/{token}/"
+
+        # Send email
+        subject = "Activate Your K11 Software Solutions Account"
+        message = f"Hi {user.username},\n\nPlease activate your account by clicking the link below:\n{activation_link}\n\nThank you for joining us!"
+        send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email])
+
+        return Response(
+            {"message": "Registration successful! Please check your email to activate your account."},
+            status=status.HTTP_201_CREATED,
+        )
+
+from django.utils.http import urlsafe_base64_decode
+
+class ActivateAccountView(APIView):
+    def get(self, request, uidb64, token):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+        except (User.DoesNotExist, ValueError, TypeError, OverflowError):
+            return Response({"error": "Invalid activation link."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Validate token
+        if default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.save()
+            return Response({"message": "Account activated successfully! You can now log in."}, status=status.HTTP_200_OK)
+        else:
+            return Response({"error": "Activation link is invalid or expired."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DashboardView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        subscription = None
+        if hasattr(user, 'profile'):
+            subscription = user.profile.subscription
+        return Response({
+            "message": f"Welcome {user.username}, this is your dashboard data!",
+            "email": user.email,
+            "subscription": subscription
+        })
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.core.mail import send_mail
+
+class ContactView(APIView):
+    def post(self, request):
+        name = request.data.get("name")
+        email = request.data.get("email")
+        message = request.data.get("message")
+
+        if not all([name, email, message]):
+            return Response({"error": "All fields are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Option 1: Send Email (simple example)
+        from django.conf import settings
+        contact_recipient = getattr(settings, "CONTACT_RECIPIENT_EMAIL", "support@k11softwaresolutions.com")
+        contact_sender = "noreply@k11softwaresolutions.com"
+        try:
+            send_mail(
+                subject=f"New Contact from {name}",
+                message=f"Message from {name} <{email}>:\n\n{message}",
+                from_email=contact_sender,
+                recipient_list=[contact_recipient],
+                fail_silently=False,
+            )
+        except Exception as e:
+            print("Email sending failed:", e)
+
+        # Option 2 (optional): Save to DB if you want
+        # Contact.objects.create(name=name, email=email, message=message)
+
+        return Response({"success": "Message sent successfully!"}, status=status.HTTP_200_OK)

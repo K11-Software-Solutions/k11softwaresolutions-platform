@@ -1,0 +1,2 @@
+# This file is intentionally left blank.
+# Node.js/Next.js projects use package.json for dependencies.
