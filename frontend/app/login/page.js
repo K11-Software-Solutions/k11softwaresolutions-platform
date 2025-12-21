@@ -38,7 +38,9 @@ export default function Login() {
       {error && <p className="text-red-500 text-center mb-2">{error}</p>}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+
         <input
+          id="username"
           type="text"
           placeholder="Username"
           className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -47,6 +49,7 @@ export default function Login() {
         />
 
         <input
+          id="password"
           type="password"
           placeholder="Password"
           className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -65,6 +68,7 @@ export default function Login() {
         </div>
 
         <button
+          id="submit"
           type="submit"
           disabled={loading}
           className={`bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition ${
