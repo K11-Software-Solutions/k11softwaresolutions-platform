@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: k11softwaresolutions-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    rootDir: backend
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Add your other environment variables here, e.g.:
+      - key: EMAIL_HOST_USER
+        value: k11softwaresolutions@outlook.com
+      - key: EMAIL_HOST_PASSWORD
+        value: ztmoiazxkilfggra
+
+
