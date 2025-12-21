@@ -1,4 +1,53 @@
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.models import User
+from django.utils.crypto import get_random_string
+from django.core.mail import send_mail
+from .serializers import PasswordResetRequestSerializer, PasswordResetSerializer
+from .models import UserProfile
+from django.contrib.auth.hashers import make_password
+
+class PasswordResetRequestView(APIView):
+    def post(self, request):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            try:
+                user = User.objects.get(email=email)
+                token = get_random_string(64)
+                user.userprofile.reset_token = token
+                user.userprofile.save()
+                reset_url = f"{request.build_absolute_uri('/reset-password/')}?token={token}"
+                send_mail(
+                    "Password Reset",
+                    f"Click the link to reset your password: {reset_url}",
+                    "k11softwaresolutions@outlook.com",
+                    [email],
+                )
+            except User.DoesNotExist:
+                pass  # Don't reveal if user exists
+            return Response({"msg": "If your email is registered, you will receive a reset link."})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class PasswordResetView(APIView):
+    def post(self, request):
+        serializer = PasswordResetSerializer(data=request.data)
+        if serializer.is_valid():
+            token = serializer.validated_data['token']
+            password = serializer.validated_data['password']
+            try:
+                profile = UserProfile.objects.get(reset_token=token)
+                user = profile.user
+                user.password = make_password(password)
+                user.save()
+                profile.reset_token = ""
+                profile.save()
+                return Response({"msg": "Password reset successful."})
+            except UserProfile.DoesNotExist:
+                return Response({"msg": "Invalid or expired token."}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 
 # API root endpoint
