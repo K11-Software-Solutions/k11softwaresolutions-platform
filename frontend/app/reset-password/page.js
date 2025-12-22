@@ -1,7 +1,7 @@
 
 "use client";
 import { useState, Suspense } from "react";
-import api from "@/utils/api";
+import api from "../../utils/api";
 import { useRouter, useSearchParams } from "next/navigation";
 
 
