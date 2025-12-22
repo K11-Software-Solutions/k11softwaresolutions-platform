@@ -31,17 +31,17 @@ export default function Login() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-8 mt-20 bg-white shadow rounded">
-      <h2 className="text-2xl font-semibold mb-6 text-center text-blue-800">
+    <div className="max-w-md mx-auto p-8 mt-20 bg-white shadow rounded" id="login-container">
+      <h2 className="text-2xl font-semibold mb-6 text-center text-blue-800" id="login-title">
         Login
       </h2>
 
-      {error && <p className="text-red-500 text-center mb-2">{error}</p>}
+      {error && <p className="text-red-500 text-center mb-2" id="login-error">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4" id="login-form">
 
         <input
-          id="username"
+          id="login-username"
           type="text"
           placeholder="Username"
           className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -50,7 +50,7 @@ export default function Login() {
         />
 
         <input
-          id="password"
+          id="login-password"
           type="password"
           placeholder="Password"
           className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -59,17 +59,18 @@ export default function Login() {
         />
 
         {/* 🔗 Forgot Password Link */}
-        <div className="text-right">
+        <div className="text-right" id="login-forgot-password-link">
           <a
             href="/forgot-password"
             className="text-sm text-blue-600 hover:underline"
+            id="login-forgot-link"
           >
             Forgot your password?
           </a>
         </div>
 
         <button
-          id="submit"
+          id="login-submit"
           type="submit"
           disabled={loading}
           className={`bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition ${
@@ -80,9 +81,9 @@ export default function Login() {
         </button>
       </form>
 
-      <p className="text-center mt-4 text-sm text-gray-600">
+      <p className="text-center mt-4 text-sm text-gray-600" id="login-register-link">
         Don’t have an account?{" "}
-        <a href="/register" className="text-blue-600 hover:underline font-medium">
+        <a href="/register" className="text-blue-600 hover:underline font-medium" id="login-register-here">
           Register here
         </a>
       </p>
