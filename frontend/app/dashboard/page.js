@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import api from "@/utils/api";
+import api from "../../utils/api";
 import { useRouter } from "next/navigation";
 
 export default function Dashboard() {

@@ -134,6 +134,11 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 # ====================================================
 # ✅ CORS (Cross-Origin for Frontend)
 # ====================================================

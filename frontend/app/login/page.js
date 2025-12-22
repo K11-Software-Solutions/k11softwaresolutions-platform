@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import api from "@/utils/api";
+import api from "../../utils/api";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Login() {
   const router = useRouter();
@@ -19,6 +19,7 @@ export default function Login() {
       const res = await api.post("/login/", form);
       localStorage.setItem("token", res.data.access);
       localStorage.setItem("refresh", res.data.refresh);
+      window.dispatchEvent(new Event("k11-login-state"));
       login(res.data.access);
       router.push("/dashboard");
     } catch (err) {

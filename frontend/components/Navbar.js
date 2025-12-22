@@ -1,96 +1,128 @@
 "use client";
+
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { logout } from "@/utils/auth";
+import { useRouter } from "next/navigation";
+import { styles } from "./ui/styles";
+import { Button } from "./ui/Button";
 
 export default function Navbar() {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
-    setLoggedIn(!!localStorage.getItem("token"));
-
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 30);
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    // Check login state on mount and when storage changes or custom login event
+    const checkLogin = () => {
+      const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      setIsLoggedIn(!!token);
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    checkLogin();
+    window.addEventListener("storage", checkLogin);
+    window.addEventListener("k11-login-state", checkLogin);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("storage", checkLogin);
+      window.removeEventListener("k11-login-state", checkLogin);
+    };
   }, []);
 
+  const handleLogout = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("token");
+      setIsLoggedIn(false);
+      window.dispatchEvent(new Event("k11-login-state"));
+      router.push("/login");
+    }
+  };
 
   return (
-    <nav
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-blue-900/95 backdrop-blur-md shadow-lg"
-          : "bg-gradient-to-r from-blue-900 via-blue-700 to-blue-500"
-      }`}
+    <header
+      className={[
+        "sticky top-0 z-50 w-full",
+        "transition-all duration-300",
+        scrolled
+          ? "bg-white/80 backdrop-blur border-b border-slate-200 shadow-sm"
+          : "bg-transparent",
+      ].join(" ")}
     >
-      <div className="max-w-7xl mx-auto px-6 py-3 flex justify-between items-center">
+      <div className={`${styles.container} h-16 flex items-center justify-between`}>
         {/* Brand */}
         <Link
           href="/"
-          className="text-2xl font-extrabold text-white tracking-wide hover:text-blue-200 transition duration-200"
+          className="flex items-center gap-2 font-semibold tracking-tight text-slate-900"
         >
-          <span className="text-blue-300">K11</span> Software Solutions
+          <img src="/images/k11_logo.png" alt="K11 Logo" className="h-9 w-9 rounded-xl bg-white object-contain" style={{background:'#fff'}} />
+          <span className="text-lg">K11 Software Solutions</span>
         </Link>
 
-        {/* Nav Links */}
-        <div className="flex gap-6 items-center">
+        {/* Nav */}
+        <nav className="hidden md:flex items-center gap-2">
           <Link
             href="/"
-            className="text-white font-medium px-3 py-2 rounded hover:bg-blue-800 hover:text-blue-200 transition duration-200"
+            className="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
           >
             Home
           </Link>
+
           <Link
-            id="services"
             href="/services"
-            className="text-white font-medium px-3 py-2 rounded hover:bg-blue-800 hover:text-blue-200 transition duration-200"
+            className="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
           >
             Services
           </Link>
           <Link
+            href="/insights"
+            className="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
+          >
+            Insights
+          </Link>
+          <Link
+            href="/about"
+            className="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
+          >
+            About
+          </Link>
+          <Link
             href="/contact"
-            className="text-white font-medium px-3 py-2 rounded hover:bg-blue-800 hover:text-blue-200 transition duration-200"
+            className="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
           >
             Contact
           </Link>
 
-          {loggedIn ? (
+          <div className="mx-2 h-6 w-px bg-slate-200" />
+          {!isLoggedIn ? (
             <>
-              <Link
-                id="dashboard"
-                href="/dashboard"
-                className="text-white font-medium px-3 py-2 rounded hover:bg-blue-800 hover:text-blue-200 transition duration-200"
-              >
-                Dashboard
-              </Link>
-              <button
-                onClick={logout}
-                className="bg-red-600 text-white font-medium px-3 py-2 rounded hover:bg-red-700 transition duration-200"
-              >
-                Logout
-              </button>
+              <Button as={Link} href="/login" variant="ghost">
+                Login
+              </Button>
+              <Button as={Link} href="/register" variant="primary">
+                Register
+              </Button>
             </>
           ) : (
-            <>
-              <Link
-                href="/login"
-                className="text-white font-medium px-3 py-2 rounded hover:bg-blue-800 hover:text-blue-200 transition duration-200"
-              >
-                Login
-              </Link>
-              <Link
-                href="/register"
-                className="border border-white text-white font-medium px-3 py-2 rounded hover:bg-white hover:text-blue-800 transition duration-200"
-              >
-                Register
-              </Link>
-            </>
+            <Button onClick={handleLogout} variant="ghost">
+              Logout
+            </Button>
+          )}
+        </nav>
+
+        {/* Mobile CTA */}
+        <div className="md:hidden">
+          {!isLoggedIn ? (
+            <Button as={Link} href="/register" variant="primary">
+              Register
+            </Button>
+          ) : (
+            <Button onClick={handleLogout} variant="ghost">
+              Logout
+            </Button>
           )}
         </div>
       </div>
-    </nav>
+    </header>
   );
 }

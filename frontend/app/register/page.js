@@ -1,18 +1,22 @@
 "use client";
 import { useState } from "react";
-import api from "@/utils/api";
+import api from "../../utils/api";
 import { useRouter } from "next/navigation";
 
 export default function Register() {
   const router = useRouter();
   const [form, setForm] = useState({ username: "", email: "", password: "", subscription: "basic" });
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await api.post("/register/", form);
-      router.push("/login");
+      setSuccess(true);
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
     } catch (err) {
       if (err.response && err.response.data && err.response.data.error) {
         setError(err.response.data.error);
@@ -80,6 +84,7 @@ export default function Register() {
         </table>
       </div>
       {error && <p className="text-red-500">{error}</p>}
+      {success && <p className="text-green-600 text-center font-semibold">Registration successful! Redirecting to login...</p>}
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input type="text" placeholder="Username" className="p-2 border rounded"
           onChange={(e) => setForm({ ...form, username: e.target.value })}/>

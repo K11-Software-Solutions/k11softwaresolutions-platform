@@ -1,67 +1,128 @@
 "use client";
-import { useEffect, useState } from "react";
-import api from "@/utils/api";
+
+import { Card, CardBody } from "../../components/ui/Card";
 
 export default function Services() {
-  const [services, setServices] = useState([]);
+  const services = [
+    {
+      title: "AI-driven Full-Stack Test Automation",
+      desc: "AI-powered, end-to-end automation across UI, API, DB, and cloud validations—leveraging intelligence for smarter, faster, and more reliable testing.",
+      bullets: ["UI + API automation", "CI/CD integration", "Reliable reporting"],
+      badge: "Most popular",
+      cta: { label: "Talk about automation", href: "/contact" },
+    },
+    {
+      title: "AI/ML in Testing",
+      desc: "Smarter test design with model-based approaches and AI-assisted workflow generation.",
+      bullets: ["Model-based test design", "Scenario generation", "Intelligent test workflows"],
+      badge: "AI-ready",
+      cta: { label: "Explore AI testing", href: "/contact" },
+    },
+    {
+      title: "Custom Development Consulting",
+      desc: "Hands-on help building modern apps, APIs, and test frameworks with scalable architecture.",
+      bullets: ["Java / Python / REST APIs", "Test frameworks", "Microservices"],
+      badge: "Build & ship",
+      cta: { label: "Start a project", href: "/contact" },
+    },
+    {
+      title: "Data Analytics",
+      desc: "Transform your raw data into actionable insights with our advanced analytics solutions.",
+      bullets: ["Data visualization", "Business intelligence dashboards", "Predictive analytics"],
+      badge: "Data-driven",
+      cta: { label: "Discuss analytics", href: "/contact" },
+    },
+    {
+      title: "AI Development",
+      desc: "Custom AI solutions for automation, prediction, and optimization tailored to your business needs.",
+      bullets: [
+        "ML-based scoring & recommendation engines",
+        "Predictive analytics & decision engines",
+        "Forecasting & trend analysis",
+        "Smart automation pipelines",
+        "AI-assisted business logic"
+      ],
+      badge: "AI solutions",
+      cta: { label: "Start AI project", href: "/contact" },
+    },
+    {
+      title: "Upskilling & Mentorship",
+      desc: "Structured coaching for teams and individuals to build real-world engineering confidence.",
+      bullets: ["Career guidance", "Team enablement", "Best practices"],
+      badge: "Mentorship",
+      cta: { label: "Request mentorship", href: "/contact" },
+    },
+  ];
 
-  useEffect(() => {
-    api.get("/services").then((res) => setServices(res.data));
-  }, []);
+  const resources = [
+    {
+      title: "SDET Insights Website",
+      desc: "Learn more about test automation, QA best practices, and industry insights.",
+      icon: "🌐",
+      href: "https://www.softwaretestautomation.org/",
+      cta: "Visit website",
+    },
+    {
+      title: "SDET Insights Newsletter",
+      desc: "Professional technical writing, best practices, and insights for modern QA teams.",
+      icon: "📰",
+      href: "https://www.linkedin.com/newsletters/sdet-insights-7354009267919613954/",
+      cta: "Read on LinkedIn",
+    },
+    {
+      title: "K11 Tech Lab GitHub Organization",
+      desc: "Explore our open-source projects, code samples, and engineering resources.",
+      icon: "💻",
+      href: "https://github.com/orgs/K11-Software-Solutions",
+      cta: "View on GitHub",
+    },
+  ];
 
   return (
     <div className="p-10 text-center">
       <h1 className="text-3xl font-bold mb-6">Our Services</h1>
-      <div className="flex flex-col gap-8 items-center w-full max-w-3xl mx-auto">
-        {services.length > 0 ? (
-          services.map((s, i) => (
-            <div
-              key={s._id || s.id}
-              className="relative group border p-8 rounded-2xl bg-gradient-to-br from-blue-50 via-white to-blue-100 shadow-xl flex flex-row items-center w-full max-w-3xl mx-auto transform transition duration-300 hover:-translate-y-2 hover:shadow-2xl hover:scale-[1.02] animate-fade-in"
-              style={{ animationDelay: `${i * 80}ms` }}
-            >
-              <div className="flex-1 flex flex-col justify-center">
-                <div className="absolute -top-6 left-8 bg-blue-600 text-white rounded-full px-4 py-1 text-xs font-bold shadow group-hover:bg-blue-800 transition">{s.name}</div>
-                <pre className="whitespace-pre-wrap text-sm text-gray-700 mb-4 mt-8 text-left" style={{fontFamily: 'inherit'}} dangerouslySetInnerHTML={{
-                  __html: s.description.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                }} />
-                {s.price && <p className="mt-2 text-blue-600 font-medium">${s.price}</p>}
-                {/* Subscribe button for Upskilling & Mentorship */}
-                {s.name && s.name.toLowerCase().includes("upskilling") && (
-                  <button
-                    className="mt-4 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-full font-semibold shadow transition-all duration-200"
-                    onClick={() => window.location.href = '/register'}
-                  >
-                    Subscribe
-                  </button>
-                )}
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 w-full max-w-6xl mx-auto">
+        {services.map((s, i) => (
+          <Card key={s.title} className="flex flex-col h-full relative group bg-slate-50 border border-slate-100 shadow-sm">
+            <CardBody className="flex-1 flex flex-col items-start">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="ml-2 px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold">{s.badge}</span>
               </div>
-              {s.website && (
-                <div className="flex flex-col items-center justify-center ml-8">
-                  <a
-                    href={s.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-6 py-3 bg-gradient-to-r from-blue-700 to-blue-500 text-white rounded-full font-semibold shadow hover:from-blue-800 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-200"
-                  >
-                    {s.name.toLowerCase().includes("newsletter")
-                      ? "Visit SDET Insights LinkedIn newsletter"
-                      : "Visit Website"}
-                  </a>
-                </div>
-              )}
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500">No services available yet.</p>
-        )}
-        {/* Always show Subscribe button at the bottom */}
-        <button
-          className="mt-2 px-8 py-3 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-bold shadow-lg transition-all duration-200 text-lg"
-          onClick={() => window.location.href = '/register'}
-        >
-          Subscribe
-        </button>
+              <h2 className="text-xl font-bold mb-2 text-left">{s.title}</h2>
+              <p className="text-slate-600 mb-3 text-left">{s.desc}</p>
+              <ul className="mb-4 text-left list-disc list-inside text-slate-500">
+                {s.bullets.map((b, j) => (
+                  <li key={j}>{b}</li>
+                ))}
+              </ul>
+              <a
+                href={s.cta.href}
+                className="mt-auto inline-block px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow transition-all duration-200"
+              >
+                {s.cta.label}
+              </a>
+            </CardBody>
+          </Card>
+        ))}
+      </div>
+      <h2 className="text-2xl font-bold mt-12 mb-6">Resources</h2>
+      <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 w-full max-w-6xl mx-auto">
+        {resources.map((r) => (
+          <Card key={r.title} className="flex flex-col h-full relative group">
+            <CardBody className="flex-1 flex flex-col items-start">
+              <h3 className="text-lg font-bold mb-1 text-left">{r.title}</h3>
+              <p className="text-slate-600 mb-3 text-left">{r.desc}</p>
+              <a
+                href={r.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-auto inline-block px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-full font-semibold shadow transition-all duration-200"
+              >
+                {r.cta}
+              </a>
+            </CardBody>
+          </Card>
+        ))}
       </div>
     </div>
   );
