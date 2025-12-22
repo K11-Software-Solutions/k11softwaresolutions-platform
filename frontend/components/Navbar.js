@@ -44,6 +44,7 @@ export default function Navbar() {
             Home
           </Link>
           <Link
+            id="services"
             href="/services"
             className="text-white font-medium px-3 py-2 rounded hover:bg-blue-800 hover:text-blue-200 transition duration-200"
           >
@@ -59,6 +60,7 @@ export default function Navbar() {
           {loggedIn ? (
             <>
               <Link
+                id="dashboard"
                 href="/dashboard"
                 className="text-white font-medium px-3 py-2 rounded hover:bg-blue-800 hover:text-blue-200 transition duration-200"
               >
