@@ -11,6 +11,13 @@ module.exports = defineConfig({
     baseURL: process.env.BASE_URL || 'http://localhost:3000',
     trace: 'on-first-retry',
   },
+  // Start a web server for tests (build + start). Playwright will wait for the port.
+  webServer: {
+    command: 'npm run build && npm run start',
+    port: 3000,
+    timeout: 120 * 1000,
+    reuseExistingServer: !process.env.CI,
+  },
   projects: [
     { name: 'chromium', use: { browserName: 'chromium' } },
   ],
