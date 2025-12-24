@@ -16,20 +16,22 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install Render CLI
-        run: |
-          npm install -g render-cli || true
-          # fallback to npx if global install is not available
-
-      - name: Deploy using render.yaml
+      - name: Deploy using Render REST API
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          if command -v render-cli >/dev/null 2>&1; then
-            render-cli deploy --file render.yaml --api-key "$RENDER_API_KEY"
-          else
-            npx render-cli deploy --file render.yaml --api-key "$RENDER_API_KEY"
+          set -euo pipefail
+          echo "Reading service name from render.yaml"
+          SERVICE_NAME=$(grep -E '^\s*-?\s*name:' render.yaml | head -n1 | awk '{print $2}')
+          echo "Service name: $SERVICE_NAME"
+          echo "Querying Render for service id..."
+          SERVICE_ID=$(curl -sS -H "Authorization: Bearer $RENDER_API_KEY" https://api.render.com/v1/services | python3 -c "import sys,json,os; name=os.environ['SERVICE_NAME']; arr=json.load(sys.stdin); ids=[s.get('id') for s in arr if s.get('name')==name]; print(ids[0] if ids else '')")
+          if [ -z "$SERVICE_ID" ]; then
+            echo "Service not found via API for name: $SERVICE_NAME"
+            exit 1
           fi
+          echo "Triggering deploy for service id: $SERVICE_ID"
+          curl -sS -X POST -H "Authorization: Bearer $RENDER_API_KEY" -H "Content-Type: application/json" https://api.render.com/v1/services/$SERVICE_ID/deploys -d '{}' | python3 -m json.tool
 
       - name: Notify
         run: echo "Render deploy step finished (check Render dashboard)."
