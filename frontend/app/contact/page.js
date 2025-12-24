@@ -16,13 +16,6 @@ export default function Contact() {
 
   return (
     <>
-      <div className="w-full h-40 md:h-56 lg:h-64 xl:h-72 overflow-hidden">
-        <img
-          src="/images/Hero.png"
-          alt="Hero"
-          className="w-full h-full object-cover"
-        />
-      </div>
       <div className="max-w-lg mx-auto">
         <h1 className="text-3xl font-bold mb-6 text-center">Contact Us</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
