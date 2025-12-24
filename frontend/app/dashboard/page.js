@@ -45,12 +45,13 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="max-w-lg mx-auto mt-20 bg-white shadow-lg p-8 rounded">
-      <h2 className="text-2xl font-bold mb-4">Dashboard</h2>
-      <p className="text-gray-700 mb-2">Welcome, <b>{user.message}</b></p>
-      <p className="text-gray-600">Email: {user.email}</p>
+    <div id="dashboard-container" className="max-w-lg mx-auto mt-20 bg-white shadow-lg p-8 rounded">
+      <h2 id="dashboard-title" className="text-2xl font-bold mb-4">Dashboard</h2>
+      <p id="dashboard-welcome" className="text-gray-700 mb-2">Welcome, <b>{user.message}</b></p>
+      <p id="dashboard-email" className="text-gray-600">Email: {user.email}</p>
 
       <button
+        id="dashboard-logout"
         onClick={() => {
           localStorage.removeItem("token");
           router.push("/login");

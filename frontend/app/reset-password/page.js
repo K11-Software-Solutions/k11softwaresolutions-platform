@@ -40,12 +40,13 @@ function ResetPasswordInner() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-8 mt-20 bg-white shadow rounded">
-      <h2 className="text-2xl font-semibold mb-6 text-center text-blue-800">Reset Password</h2>
-      {message && <p className="text-green-600 text-center mb-2">{message}</p>}
-      {error && <p className="text-red-500 text-center mb-2">{error}</p>}
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <div id="reset-password-container" className="max-w-md mx-auto p-8 mt-20 bg-white shadow rounded">
+      <h2 id="reset-password-title" className="text-2xl font-semibold mb-6 text-center text-blue-800">Reset Password</h2>
+      {message && <p id="reset-password-message" className="text-green-600 text-center mb-2">{message}</p>}
+      {error && <p id="reset-password-error" className="text-red-500 text-center mb-2">{error}</p>}
+      <form id="reset-password-form" onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
+          id="reset-password-password"
           type="password"
           placeholder="New password"
           className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -54,6 +55,7 @@ function ResetPasswordInner() {
           required
         />
         <input
+          id="reset-password-confirm"
           type="password"
           placeholder="Confirm new password"
           className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -62,6 +64,7 @@ function ResetPasswordInner() {
           required
         />
         <button
+          id="reset-password-submit"
           type="submit"
           disabled={loading}
           className={`bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition ${loading ? "opacity-70 cursor-not-allowed" : ""}`}

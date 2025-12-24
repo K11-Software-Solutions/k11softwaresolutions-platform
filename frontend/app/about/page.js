@@ -2,9 +2,9 @@
 
 export default function About() {
   return (
-    <div className="flex justify-center items-center min-h-[60vh] py-12 px-2">
+    <div id="about-container" className="flex justify-center items-center min-h-[60vh] py-12 px-2">
       <div className="w-full max-w-3xl bg-white shadow-lg rounded-xl p-8 md:p-12 border border-slate-200">
-        <h1 className="text-4xl font-bold mb-6 text-blue-900">About K11 Software Solutions</h1>
+        <h1 id="about-title" className="text-4xl font-bold mb-6 text-blue-900">About K11 Software Solutions</h1>
         <p className="text-lg text-slate-700 mb-6">
           K11 Software Solutions is a technology consultancy focused on delivering intelligent, scalable software systems. We specialize in AI-driven applications, automation, consulting, training, and modern software engineering—helping organizations turn complex challenges into reliable, high-impact solutions.
         </p>

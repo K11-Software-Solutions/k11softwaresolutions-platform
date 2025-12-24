@@ -79,8 +79,8 @@ export default function Services() {
   ];
 
   return (
-    <div className="p-10 text-center">
-      <h1 className="text-3xl font-bold mb-6">Our Services</h1>
+    <div id="services-container" className="p-10 text-center">
+      <h1 id="services-title" className="text-3xl font-bold mb-6">Our Services</h1>
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 w-full max-w-6xl mx-auto">
         {services.map((s, i) => (
           <Card key={s.title} className="flex flex-col h-full relative group bg-slate-50 border border-slate-100 shadow-sm">
