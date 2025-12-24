@@ -31,19 +31,14 @@ jobs:
         run: npm ci
         working-directory: frontend
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
+      - name: Run Playwright tests via Playwright Action
+        uses: microsoft/playwright-github-action@v1
         with:
-          path: |
-            ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright-browsers-${{ hashFiles('frontend/package-lock.json') }}
-
-      - name: Install Playwright browsers (if not cached)
-        run: npx playwright install --with-deps
-        working-directory: frontend
-
-      - name: Run Playwright tests for matrix browser
-        run: npx playwright test --project=${{ matrix.browser }} --reporter=github,html
+          browser: ${{ matrix.browser }}
+          run: npm run test:e2e:ci
+        # run action from frontend directory
+        env:
+          CI: true
         working-directory: frontend
 
       - name: Upload Playwright report
