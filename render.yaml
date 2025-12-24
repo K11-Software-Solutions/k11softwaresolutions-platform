@@ -13,6 +13,6 @@ services:
       - key: EMAIL_HOST_USER
         value: k11softwaresolutions@outlook.com
       - key: EMAIL_HOST_PASSWORD
-        value: ztmoiazxkilfggra
+        fromSecret: RENDER_EMAIL_PASSWORD
 
 
