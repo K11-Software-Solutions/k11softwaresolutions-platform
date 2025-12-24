@@ -8,7 +8,7 @@ on:
 
 jobs:
   e2e:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         browser: [chromium]
@@ -31,12 +31,14 @@ jobs:
         run: npm ci --legacy-peer-deps
         working-directory: frontend
 
-      - name: Run Playwright tests via Playwright Action
-        uses: microsoft/playwright-github-action@v1
-        with:
-          browser: ${{ matrix.browser }}
-          run: npm run test:e2e:ci
-        # run action from frontend directory
+      - name: Install Playwright browsers and system dependencies
+        working-directory: frontend
+        run: |
+          npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        working-directory: frontend
+        run: npm run test:e2e:ci
         env:
           CI: true
 
