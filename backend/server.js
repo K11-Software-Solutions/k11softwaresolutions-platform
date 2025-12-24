@@ -12,6 +12,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
+// Simple home route
+app.get("/", (req, res) => {
+	res.send("K11 Software Solutions API is running");
+});
+
+// Health check route
+app.get("/health", (req, res) => res.status(200).json({ ok: true }));
+
 // Routes
 app.use("/api/sqlite-auth", sqliteAuthRoutes);
 app.use("/api/services", serviceRoutes);
