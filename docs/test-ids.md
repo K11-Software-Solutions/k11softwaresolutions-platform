@@ -63,15 +63,64 @@ File: [frontend/app/login/page.js](frontend/app/login/page.js)
 - `login-register-link` — Paragraph wrapper for register link
 - `login-register-here` — "Register here" anchor
 
-### Pages with no `id` attributes found (source files)
-- `frontend/app/forgot-password/page.js` — no ids
-- `frontend/app/reset-password/page.js` — no ids
-- `frontend/app/register/page.js` — no ids
-- `frontend/app/contact/page.js` — no ids
-- `frontend/app/services/page.js` — no ids
-- `frontend/app/about/page.js` — no ids
-- `frontend/app/insights/page.js` — no ids
-- `frontend/app/dashboard/page.js` — no ids
+### Pages updated with `id` attributes
+File: [frontend/app/forgot-password/page.js](frontend/app/forgot-password/page.js)
+- `forgot-password-container` — Page wrapper
+- `forgot-password-form` — Form element
+- `forgot-password-email` — Email input
+- `forgot-password-submit` — Submit button
+- `forgot-password-message` — Success message
+- `forgot-password-error` — Error message
+
+File: [frontend/app/reset-password/page.js](frontend/app/reset-password/page.js)
+- `reset-password-container` — Page wrapper
+- `reset-password-title` — Page title
+- `reset-password-message` — Success message
+- `reset-password-error` — Error message
+- `reset-password-form` — Form element
+- `reset-password-password` — New password input
+- `reset-password-confirm` — Confirm password input
+- `reset-password-submit` — Submit button
+
+File: [frontend/app/register/page.js](frontend/app/register/page.js)
+- `register-container` — Page wrapper
+- `register-title` — Page title
+- `register-error` — Error message
+- `register-success` — Success message
+- `register-form` — Form element
+- `register-username` — Username input
+- `register-email` — Email input
+- `register-password` — Password input
+- `register-subscription` — Subscription select
+- `register-submit` — Submit button
+
+File: [frontend/app/contact/page.js](frontend/app/contact/page.js)
+- `contact-container` — Page wrapper
+- `contact-title` — Page title
+- `contact-form` — Form element
+- `contact-name` — Name input
+- `contact-email` — Email input
+- `contact-message` — Message textarea
+- `contact-submit` — Submit button
+- `contact-sent` — Sent confirmation message
+
+File: [frontend/app/services/page.js](frontend/app/services/page.js)
+- `services-container` — Page wrapper
+- `services-title` — Page title
+
+File: [frontend/app/about/page.js](frontend/app/about/page.js)
+- `about-container` — Page wrapper
+- `about-title` — Page title
+
+File: [frontend/app/insights/page.js](frontend/app/insights/page.js)
+- `insights-container` — Page wrapper
+
+File: [frontend/app/dashboard/page.js](frontend/app/dashboard/page.js)
+- `dashboard-container` — Page wrapper
+- `dashboard-title` — Page title
+- `dashboard-welcome` — Welcome text element
+- `dashboard-email` — Email display element
+- `dashboard-logout` — Logout button
 
 ### Components
 - `frontend/components` — No `id` attributes detected in source files under `components/`.
