@@ -9,6 +9,9 @@ on:
 jobs:
   e2e:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,6 +21,12 @@ jobs:
         with:
           node-version: 18
 
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('frontend/package-lock.json') }}
+
       - name: Install dependencies
         run: npm ci
         working-directory: frontend
@@ -26,6 +35,20 @@ jobs:
         run: npx playwright install --with-deps
         working-directory: frontend
 
-      - name: Run Playwright tests
-        run: npx playwright test --reporter=github
+      - name: Run Playwright tests for matrix browser
+        run: npx playwright test --project=${{ matrix.browser }} --reporter=github
         working-directory: frontend
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report
+
+      - name: Upload test-results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: frontend/test-results
