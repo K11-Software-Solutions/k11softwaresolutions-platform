@@ -39,7 +39,6 @@ jobs:
         # run action from frontend directory
         env:
           CI: true
-        working-directory: frontend
 
       - name: Upload Playwright report
         if: always()
