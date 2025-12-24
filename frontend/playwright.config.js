@@ -5,7 +5,14 @@ module.exports = defineConfig({
   timeout: 30 * 1000,
   expect: { timeout: 5000 },
   fullyParallel: true,
-  reporter: process.env.CI ? 'github' : 'list',
+  // Reporters: GitHub reporter in CI plus HTML report for artifacts
+  reporter: process.env.CI
+    ? [['github'], ['html', { outputFolder: 'playwright-report' }]]
+    : [['list'], ['html', { outputFolder: 'playwright-report' }]],
+  // Retries in CI to reduce flakes
+  retries: process.env.CI ? 2 : 0,
+  // Collect test artifacts into this folder
+  outputDir: 'test-results',
   use: {
     headless: true,
     baseURL: process.env.BASE_URL || 'http://localhost:3000',
