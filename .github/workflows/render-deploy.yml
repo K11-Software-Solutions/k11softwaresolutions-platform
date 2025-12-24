@@ -18,17 +18,17 @@ jobs:
 
       - name: Install Render CLI
         run: |
-          npm install -g @render/cli || true
+          npm install -g render-cli || true
           # fallback to npx if global install is not available
 
       - name: Deploy using render.yaml
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          if command -v render >/dev/null 2>&1; then
-            render deploy --file render.yaml --api-key "$RENDER_API_KEY"
+          if command -v render-cli >/dev/null 2>&1; then
+            render-cli deploy --file render.yaml --api-key "$RENDER_API_KEY"
           else
-            npx @render/cli deploy --file render.yaml --api-key "$RENDER_API_KEY"
+            npx render-cli deploy --file render.yaml --api-key "$RENDER_API_KEY"
           fi
 
       - name: Notify
