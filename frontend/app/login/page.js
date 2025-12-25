@@ -16,11 +16,13 @@ export default function Login() {
     setError("");
     setLoading(true);
     try {
-      const res = await api.post("/login/", form);
-      localStorage.setItem("token", res.data.access);
-      localStorage.setItem("refresh", res.data.refresh);
+      // backend exposes sqlite-auth routes at /api/sqlite-auth
+      const payload = { email: form.username, password: form.password };
+      const res = await api.post("/sqlite-auth/login", payload);
+      // backend returns { token, user }
+      localStorage.setItem("token", res.data.token);
       window.dispatchEvent(new Event("k11-login-state"));
-      login(res.data.access);
+      login(res.data.token);
       router.push("/dashboard");
     } catch (err) {
       console.error("Login failed:", err);
