@@ -1,18 +1,45 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "../../utils/api";
 import { useRouter } from "next/navigation";
 
 export default function Register() {
   const router = useRouter();
-  const [form, setForm] = useState({ username: "", email: "", password: "", subscription: "basic" });
+  const [form, setForm] = useState({ username: "", email: "", password: "", subscription: "basic", subscriptionCharge: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    // autofill subscription charge when selecting a paid plan
+    if (form.subscription === "pro" && !form.subscriptionCharge) {
+      setForm((f) => ({ ...f, subscriptionCharge: "99.99" }));
+    } else if (form.subscription === "enterprise" && !form.subscriptionCharge) {
+      setForm((f) => ({ ...f, subscriptionCharge: "199.99" }));
+    } else if (form.subscription === "basic") {
+      setForm((f) => ({ ...f, subscriptionCharge: "" }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.subscription]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/register/", form);
+      const payload = { ...form };
+      if (form.subscription !== "basic") payload.subscription_charge = form.subscriptionCharge;
+      else delete payload.subscriptionCharge;
+
+      // If paid plan, create a Checkout session first and redirect to Stripe
+      if (form.subscription !== "basic") {
+        const res = await api.post("/create-checkout-session/", payload);
+        if (res.data && res.data.url) {
+          // redirect user to Stripe Checkout
+          window.location.href = res.data.url;
+          return;
+        }
+      }
+
+      // Basic plan: register immediately
+      await api.post("/register/", payload);
       setSuccess(true);
       setTimeout(() => {
         router.push("/login");
@@ -102,6 +129,24 @@ export default function Register() {
           <option value="pro">Pro</option>
           <option value="enterprise">Enterprise</option>
         </select>
+        {/* Show subscription charge input for Pro/Enterprise */}
+        {form.subscription !== "basic" && (
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium">Subscription Charge (USD)</label>
+            <input
+              id="register-subscription-charge"
+              type="number"
+              step="0.01"
+              min="0"
+              placeholder={form.subscription === "pro" ? "99.99" : "199.99"}
+              className="p-2 border rounded"
+              value={form.subscriptionCharge}
+              onChange={(e) => setForm({ ...form, subscriptionCharge: e.target.value })}
+              required
+            />
+            <p className="text-xs text-gray-600">By selecting {form.subscription}, you agree to be charged the above amount.</p>
+          </div>
+        )}
         <button id="register-submit" type="submit" className="bg-green-600 text-white p-2 rounded hover:bg-green-700">
           Create Account
         </button>
