@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const API_BASE = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/").replace(/(?<!:)\/$/, "") + "/";
+
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/",
+  baseURL: API_BASE,
 });
 
 
@@ -25,7 +27,9 @@ api.interceptors.response.use(
       }
 
       try {
-        const res = await axios.post("http://127.0.0.1:8000/api/token/refresh/", {
+        // Use explicit base URL to avoid triggering the same interceptor
+        // (don't use `api.post` here to prevent interceptor recursion)
+        const res = await axios.post(`${API_BASE}token/refresh/`, {
           refresh,
         });
         localStorage.setItem("token", res.data.access);
