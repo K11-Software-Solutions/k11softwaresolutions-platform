@@ -18,7 +18,7 @@ export default function Login() {
     try {
       // backend exposes sqlite-auth routes at /api/sqlite-auth
       const payload = { email: form.username, password: form.password };
-      const res = await api.post("/sqlite-auth/login", payload);
+      const res = await api.post("sqlite-auth/login", payload);
       // backend returns { token, user }
       localStorage.setItem("token", res.data.token);
       window.dispatchEvent(new Event("k11-login-state"));
