@@ -6,6 +6,16 @@ const api = axios.create({
   baseURL: API_BASE,
 });
 
+// expose runtime base for debugging in browser console
+if (typeof window !== "undefined") {
+  try {
+    window.__K11_API_BASE = API_BASE;
+    console.debug("K11 API_BASE:", API_BASE);
+  } catch (e) {
+    /* ignore */
+  }
+}
+
 
 // 🔁 Auto-refresh expired access token
 api.interceptors.response.use(
