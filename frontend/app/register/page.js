@@ -10,10 +10,10 @@ export default function Register() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    // autofill subscription charge when selecting a paid plan
-    if (form.subscription === "pro" && !form.subscriptionCharge) {
+    // always set the default subscription charge when subscription changes
+    if (form.subscription === "pro") {
       setForm((f) => ({ ...f, subscriptionCharge: "99.99" }));
-    } else if (form.subscription === "enterprise" && !form.subscriptionCharge) {
+    } else if (form.subscription === "enterprise") {
       setForm((f) => ({ ...f, subscriptionCharge: "199.99" }));
     } else if (form.subscription === "basic") {
       setForm((f) => ({ ...f, subscriptionCharge: "" }));
