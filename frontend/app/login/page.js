@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 export default function Login() {
   const router = useRouter();
   const { login } = useAuth();
+
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,18 +16,37 @@ export default function Login() {
     e.preventDefault();
     setError("");
     setLoading(true);
+
     try {
-      // backend exposes sqlite-auth routes at /api/sqlite-auth
-      const payload = { email: form.username, password: form.password };
-      const res = await api.post("sqlite-auth/login", payload);
-      // backend returns { token, user }
-      localStorage.setItem("token", res.data.token);
+      const payload = { username: form.username, password: form.password };
+
+      // ✅ Use leading slash to avoid baseURL concatenation issues.
+      // Change this to "/api/login/" or "/token/" if your backend uses that.
+      const res = await api.post("/login/", payload);
+
+      const { access, refresh } = res.data || {};
+      if (!access) throw new Error("No access token returned from server.");
+
+      localStorage.setItem("token", access);
+      if (refresh) localStorage.setItem("refresh", refresh);
+
       window.dispatchEvent(new Event("k11-login-state"));
-      login(res.data.token);
-      router.push("/dashboard");
+      login(access);
+
+      router.replace("/dashboard");
     } catch (err) {
       console.error("Login failed:", err);
-      setError("Invalid username or password");
+
+      const msg =
+        err?.response?.data?.detail ||
+        err?.response?.data?.message ||
+        (typeof err?.response?.data === "string"
+          ? err.response.data
+          : JSON.stringify(err?.response?.data || {})) ||
+        err.message ||
+        "Login failed";
+
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -38,16 +58,20 @@ export default function Login() {
         Login
       </h2>
 
-      {error && <p className="text-red-500 text-center mb-2" id="login-error">{error}</p>}
+      {error && (
+        <p className="text-red-500 text-center mb-2" id="login-error">
+          {error}
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4" id="login-form">
-
         <input
           id="login-username"
           type="text"
           placeholder="Username"
           className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onChange={(e) => setForm({ ...form, username: e.target.value })}
+          value={form.username}
+          onChange={(e) => setForm((p) => ({ ...p, username: e.target.value }))}
           required
         />
 
@@ -56,17 +80,13 @@ export default function Login() {
           type="password"
           placeholder="Password"
           className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
+          value={form.password}
+          onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
           required
         />
 
-        {/* 🔗 Forgot Password Link */}
         <div className="text-right" id="login-forgot-password-link">
-          <a
-            href="/forgot-password"
-            className="text-sm text-blue-600 hover:underline"
-            id="login-forgot-link"
-          >
+          <a href="/forgot-password" className="text-sm text-blue-600 hover:underline" id="login-forgot-link">
             Forgot your password?
           </a>
         </div>
