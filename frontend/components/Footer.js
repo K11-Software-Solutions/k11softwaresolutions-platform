@@ -53,10 +53,9 @@ export default function Footer() {
         <div className="flex flex-col items-center mb-6">
           <div className="flex gap-4 items-center text-xs text-slate-600">
             <span className="font-semibold">Follow Me:</span>
-            <a href="https://www.linkedin.com/in/kavita-jadhav-tech/" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline">LinkedIn</a> |
+            <a href="https://www.linkedin.com/company/k11-software-solutions/" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline">LinkedIn</a> |
             <a href="https://github.com/K11-Software-Solutions" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline">GitHub</a> |
             <a href="https://www.youtube.com/@k11-tech/" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline">YouTube</a> |
-            <a href="https://x.com/kavita_jadhav11" target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline">Twitter/X</a>
           </div>
         </div>
 
