@@ -18,6 +18,7 @@ export default function Contact() {
   return (
     <>
       <div id="contact-container" className="max-w-lg mx-auto">
+        <img src="/images/K11_Hero_banner.png" alt="K11 Hero Banner" className="w-full rounded-2xl mb-6" />
         <h1 id="contact-title" className="text-3xl font-bold mb-6 text-center">Contact Us</h1>
         <form id="contact-form" onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input id="contact-name" type="text" placeholder="Name" className="p-2 border rounded"

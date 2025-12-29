@@ -76,6 +76,13 @@ export default function Services() {
       href: "https://github.com/orgs/K11-Software-Solutions",
       cta: "View on GitHub",
     },
+    {
+      title: "Engineering Trustworthy AI Systems — K11 Tech",
+      desc: "A technical channel focused on AI development, AI-powered test automation, and intelligent quality engineering — helping teams build resilient, auditable, and production-ready AI systems.",
+      icon: "▶️",
+      href: "https://www.youtube.com/@k11-tech/",
+      cta: "Watch on YouTube",
+    },
   ];
 
   return (

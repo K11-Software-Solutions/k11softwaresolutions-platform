@@ -23,6 +23,14 @@ export default function InsightsSection() {
       tag: "QA & Automation",
       href: "https://www.linkedin.com/newsletters/sdet-insights-7354009267919613954/",
     },
+    {
+      type: "Expert Video Series • AI & Automation",
+      title: "Engineering Trustworthy AI Systems — K11 Tech",
+      desc: "A technical channel focused on AI development, AI-powered test automation, and intelligent quality engineering — helping teams build resilient, auditable, and production-ready AI systems.",
+      tag: "",
+      href: "https://www.youtube.com/@k11-tech/",
+      cta: "▶ Watch the technical walkthrough →"
+    },
   ];
 
   return (
@@ -63,7 +71,7 @@ export default function InsightsSection() {
               </p>
 
               <div className="mt-5 text-sm font-semibold text-slate-900">
-                Read more →
+                {item.cta ? item.cta : "Read more →"}
               </div>
             </a>
           ))}

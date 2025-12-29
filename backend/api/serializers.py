@@ -13,3 +13,4 @@ class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
     subscription = serializers.ChoiceField(choices=[('basic', 'Basic'), ('pro', 'Pro'), ('enterprise', 'Enterprise')])
+    subscription_charge = serializers.DecimalField(max_digits=8, decimal_places=2, required=False)
