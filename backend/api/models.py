@@ -8,6 +8,7 @@ class UserProfile(models.Model):
         ("pro", "Pro"),
         ("enterprise", "Enterprise"),
     ])
+    subscription_charge = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True)
     reset_token = models.CharField(max_length=128, blank=True, default="")
 
     def __str__(self):

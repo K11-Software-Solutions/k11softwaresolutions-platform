@@ -108,6 +108,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.conf import settings
 from .models import UserProfile
 from .serializers import RegisterSerializer
+import stripe
+from django.conf import settings
 
 
 class RegisterView(GenericAPIView):
@@ -121,6 +123,7 @@ class RegisterView(GenericAPIView):
         email = data["email"]
         password = data["password"]
         subscription = data["subscription"]
+        subscription_charge = data.get("subscription_charge")
 
         if User.objects.filter(username=username).exists():
             return Response({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
@@ -131,7 +134,11 @@ class RegisterView(GenericAPIView):
         try:
             # Create inactive user
             user = User.objects.create_user(username=username, email=email, password=password, is_active=False)
-            UserProfile.objects.create(user=user, subscription=subscription)
+            # Create or update profile and save subscription charge if provided
+            UserProfile.objects.update_or_create(user=user, defaults={
+                'subscription': subscription,
+                'subscription_charge': subscription_charge,
+            })
         except IntegrityError as e:
             if 'username' in str(e):
                 return Response({"error": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
@@ -221,3 +228,49 @@ class ContactView(APIView):
         # Contact.objects.create(name=name, email=email, message=message)
 
         return Response({"success": "Message sent successfully!"}, status=status.HTTP_200_OK)
+
+
+class CreateCheckoutSessionView(APIView):
+    """Create a Stripe Checkout Session for paid subscriptions.
+
+    Expects JSON: { subscription, email, subscription_charge }
+    Returns: { url }
+    """
+    def post(self, request):
+        data = request.data
+        subscription = data.get("subscription")
+        email = data.get("email")
+        amount = data.get("subscription_charge")
+
+        if not subscription or not email or not amount:
+            return Response({"error": "subscription, email and subscription_charge are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        stripe.api_key = getattr(settings, "STRIPE_SECRET_KEY", None)
+        if not stripe.api_key:
+            return Response({"error": "Stripe API key not configured"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        try:
+            unit_amount = int(float(amount) * 100)
+            success_url = getattr(settings, "STRIPE_SUCCESS_URL", "http://localhost:3000/register-success?session_id={CHECKOUT_SESSION_ID}")
+            cancel_url = getattr(settings, "STRIPE_CANCEL_URL", "http://localhost:3000/register?cancelled=true")
+
+            session = stripe.checkout.Session.create(
+                payment_method_types=["card"],
+                line_items=[{
+                    "price_data": {
+                        "currency": "usd",
+                        "product_data": {"name": f"{subscription} subscription"},
+                        "unit_amount": unit_amount,
+                    },
+                    "quantity": 1,
+                }],
+                mode="payment",
+                customer_email=email,
+                success_url=success_url,
+                cancel_url=cancel_url,
+                metadata={"subscription": subscription, "email": email, "amount": str(amount)},
+            )
+
+            return Response({"url": session.url})
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
