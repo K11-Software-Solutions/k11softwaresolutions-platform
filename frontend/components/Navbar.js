@@ -61,13 +61,13 @@ export default function Navbar() {
 
         {/* Nav */}
         <nav className="hidden md:flex items-center gap-2">
+
           <Link
             href="/"
             className="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
           >
             Home
           </Link>
-
           <Link
             href="/services"
             className="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
@@ -79,6 +79,12 @@ export default function Navbar() {
             className="px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-100 transition"
           >
             Insights
+          </Link>
+          <Link
+            href="/community"
+            className="px-3 py-2 rounded-lg text-sm font-medium text-blue-700 hover:bg-blue-50 transition"
+          >
+            Community
           </Link>
           <Link
             href="/about"
