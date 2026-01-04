@@ -103,7 +103,16 @@ const communityCards = [
       "Translating classical ideas into practical insights",
       "Encouraging ethical reasoning and discernment",
     ],
-    status: "Voluntary • Non-commercial",
+    status: (
+      <a
+        href="https://www.youtube.com/@DecodedGitaWisdom"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-700 hover:underline"
+      >
+        youtube.com/@DecodedGitaWisdom
+      </a>
+    ),
     icon: "🟦",
   },
 ];
