@@ -82,14 +82,24 @@ const communityCards = [
       "Community Q&A and support",
     ],
     status: (
-      <a
-        href="https://www.youtube.com/@K11-Tech-University"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-700 hover:underline"
-      >
-        youtube.com/@K11-Tech-University
-      </a>
+      <>
+        <a
+          href="https://www.youtube.com/@K11-Tech-University"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-700 hover:underline block mt-1"
+        >
+          youtube.com/@K11-Tech-University
+        </a>
+        <a
+          href="https://www.youtube.com/@k11-tech-lab/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-700 hover:underline block mt-1"
+        >
+          K11-Tech-Lab (YouTube Channel)
+        </a>
+      </>
     ),
     icon: "🟦",
   },
