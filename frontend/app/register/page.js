@@ -24,9 +24,16 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const payload = { ...form };
-      if (form.subscription !== "basic") payload.subscription_charge = form.subscriptionCharge;
-      else delete payload.subscriptionCharge;
+      // Always use snake_case for backend
+      const payload = {
+        username: form.username,
+        email: form.email,
+        password: form.password,
+        subscription: form.subscription,
+      };
+      if (form.subscription !== "basic") {
+        payload.subscription_charge = form.subscriptionCharge;
+      }
 
       // If paid plan, create a Checkout session first and redirect to Stripe
       if (form.subscription !== "basic") {
