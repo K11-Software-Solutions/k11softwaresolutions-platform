@@ -20,9 +20,8 @@ export default function Login() {
     try {
       const payload = { username: form.username, password: form.password };
 
-      // ✅ Use leading slash to avoid baseURL concatenation issues.
-      // Change this to "/api/login/" or "/token/" if your backend uses that.
-      const res = await api.post("/login/", payload);
+      // Use /api/login/ for Django backend
+      const res = await api.post("/api/login/", payload);
 
       const { access, refresh } = res.data || {};
       if (!access) throw new Error("No access token returned from server.");
